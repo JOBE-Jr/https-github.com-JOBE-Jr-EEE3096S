@@ -1,0 +1,84 @@
+#!/usr/bin/python3
+"""
+Python Practical Template
+Keegan Crankshaw
+Readjust this Docstring as follows:
+Names: Zakhele Sithole
+Student Number: STHZAK001
+Prac: 01
+Date: 30/08/2019
+"""
+
+# import Relevant Librares
+import RPi.GPIO as GPIO
+GPIO.setwarnings(False)
+#defining costants for leds
+LED_PIN_1 = 29
+LED_PIN_2 = 31
+LED_PIN_3 = 33
+#
+INPUT_1 = 13
+INPUT_2 = 11
+
+counter = 0
+x = ["000", "001", "010", "011",  "100", "101", "110", "111"]
+
+#Setting up the LED'S    
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(LED_PIN_1, GPIO.OUT)
+GPIO.setup(LED_PIN_2, GPIO.OUT)
+GPIO.setup(LED_PIN_3, GPIO.OUT)
+            
+ #Setting upp the buttons           
+GPIO.setup(INPUT_1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(INPUT_2, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+def counter_up(channel):
+    print("up")
+    global counter
+    if counter == 7:
+        counter = 0
+        
+    else:
+        counter = counter + 1
+        
+    GPIO.output(LED_PIN_1, int(x[counter][0]))
+    GPIO.output(LED_PIN_2, int(x[counter][1]))
+    GPIO.output(LED_PIN_3, int(x[counter][2]))
+    
+        
+def counter_down(channel):
+    print("down")
+    global counter
+    if counter == 0:
+        counter = 7
+        
+    else:
+        counter = counter - 1
+    
+    GPIO.output(LED_PIN_1, int(x[counter][0]))
+    GPIO.output(LED_PIN_2, int(x[counter][1]))
+    GPIO.output(LED_PIN_3, int(x[counter][2]))
+
+GPIO.add_event_detect(INPUT_1,GPIO.FALLING, callback = counter_up,bouncetime=100)
+GPIO.add_event_detect(INPUT_2,GPIO.FALLING, callback = counter_down,bouncetime=100)
+print("event added")
+# Logic that you write
+def main():
+    pass
+
+# Only run the functions if 
+if __name__ == "__main__":
+    # Make sure the GPIO is stopped correctly
+    try:    
+        while True:
+            main()
+    except KeyboardInterrupt:
+        print("Exiting gracefully")
+        # Turn off your GPIOs here
+        GPIO.cleanup()
+    except Exception as e:
+        GPIO.cleanup()
+        print("Some other error occurred")
+        print(e.message)
+
